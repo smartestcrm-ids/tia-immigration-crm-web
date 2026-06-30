@@ -10,6 +10,7 @@ import Reminders from './pages/Reminders.jsx';
 import Users from './pages/Users.jsx';
 import Roles from './pages/Roles.jsx';
 import ChannelAccounts from './pages/ChannelAccounts.jsx';
+import Profile from './pages/Profile.jsx';
 
 export default function App() {
   return (
@@ -28,6 +29,7 @@ export default function App() {
         <Route path="/leads" element={<Leads />} />
         <Route path="/leads/:id" element={<LeadDetail />} />
         <Route path="/reminders" element={<Reminders />} />
+        <Route path="/profile" element={<Profile />} />
         <Route
           path="/users"
           element={

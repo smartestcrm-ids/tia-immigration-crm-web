@@ -47,9 +47,26 @@ export default function Layout() {
           ))}
         </nav>
         {user && (
-          <div className="px-5 py-4 border-t border-slate-800">
-            <div className="text-sm font-medium">{user.name}</div>
-            <div className="text-xs text-slate-400 mb-2">{user.role}</div>
+          <div className="px-5 py-4 border-t border-slate-800 space-y-2">
+            <NavLink
+              to="/profile"
+              className={({ isActive }) =>
+                `block rounded p-2 -mx-2 transition-colors ${
+                  isActive ? 'bg-slate-800' : 'hover:bg-slate-800'
+                }`
+              }
+              title="Profile and password"
+            >
+              <div className="flex items-center gap-2">
+                <span className="w-8 h-8 rounded-full bg-brand-600 text-white text-sm font-semibold flex items-center justify-center shrink-0">
+                  {user.name?.[0]?.toUpperCase() || '?'}
+                </span>
+                <div className="min-w-0">
+                  <div className="text-sm font-medium truncate">{user.name}</div>
+                  <div className="text-xs text-slate-400 truncate">{user.role}</div>
+                </div>
+              </div>
+            </NavLink>
             <button
               onClick={doLogout}
               className="w-full text-xs px-2 py-1.5 rounded border border-slate-700 hover:bg-slate-800"
