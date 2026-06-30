@@ -130,25 +130,43 @@ export default function Users() {
             <tbody>
               {users.map((u) => (
                 <tr key={u.id} className="border-t">
-                  <td className="px-6 py-3 font-medium">{u.name}</td>
+                  <td className="px-6 py-3 font-medium">
+                    <div className="flex items-center gap-2">
+                      {u.name}
+                      {u.isProtected && (
+                        <span
+                          title="Protected account: cannot be disabled, role-changed, or deleted"
+                          className="text-xs bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded inline-flex items-center gap-1"
+                        >
+                          🔒 Protected
+                        </span>
+                      )}
+                    </div>
+                  </td>
                   <td className="px-6 py-3 text-slate-600">{u.email}</td>
                   <td className="px-6 py-3">
-                    <select
-                      value={u.role}
-                      onChange={(e) => setRole(u.id, e.target.value)}
-                      className="border rounded px-2 py-1 text-sm"
-                    >
-                      {ROLES.map((r) => <option key={r} value={r}>{r}</option>)}
-                    </select>
+                    {u.isProtected ? (
+                      <span className="text-sm text-slate-600">{u.role}</span>
+                    ) : (
+                      <select
+                        value={u.role}
+                        onChange={(e) => setRole(u.id, e.target.value)}
+                        className="border rounded px-2 py-1 text-sm"
+                      >
+                        {ROLES.map((r) => <option key={r} value={r}>{r}</option>)}
+                      </select>
+                    )}
                   </td>
                   <td className="px-6 py-3">
                     <button
-                      onClick={() => toggleActive(u)}
+                      onClick={() => !u.isProtected && toggleActive(u)}
+                      disabled={u.isProtected}
+                      title={u.isProtected ? 'Protected — cannot be disabled' : ''}
                       className={`text-xs px-2 py-1 rounded ${
                         u.active
                           ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200'
                           : 'bg-slate-200 text-slate-700 hover:bg-slate-300'
-                      }`}
+                      } ${u.isProtected ? 'opacity-60 cursor-not-allowed hover:bg-emerald-100' : ''}`}
                     >
                       {u.active ? 'Active' : 'Disabled'}
                     </button>
