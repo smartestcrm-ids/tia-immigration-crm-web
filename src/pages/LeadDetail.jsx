@@ -4,6 +4,7 @@ import { api } from '../api.js';
 import Badge from '../components/Badge.jsx';
 import ChannelIcon from '../components/ChannelIcon.jsx';
 import ClientProfileSection from '../components/ClientProfileSection.jsx';
+import CasePipeline from '../components/CasePipeline.jsx';
 
 const STATUSES = ['NEW', 'CONTACTED', 'QUALIFIED', 'CONSULTATION', 'CONVERTED', 'CLOSED'];
 
@@ -196,15 +197,29 @@ export default function LeadDetail() {
       </div>
 
       {lead.status === 'CONVERTED' && (
-        <div className="px-6 pb-8">
-          <div className="border-t pt-6 mb-4">
-            <h2 className="text-lg font-semibold flex items-center gap-2">
-              Client Profile
-              <span className="text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded">CONVERTED</span>
-            </h2>
-            <p className="text-sm text-slate-500">Family members and documents for this client.</p>
+        <div className="px-6 pb-8 space-y-8">
+          <div>
+            <div className="border-t pt-6 mb-4">
+              <h2 className="text-lg font-semibold flex items-center gap-2">
+                Case Pipeline
+                <span className="text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded">CONVERTED</span>
+              </h2>
+              <p className="text-sm text-slate-500">
+                Track this client from signed agreement through decision. Update stages, financials, and required documents.
+              </p>
+            </div>
+            <div className="bg-white rounded-lg shadow-sm border p-5">
+              <CasePipeline leadId={lead.id} />
+            </div>
           </div>
-          <ClientProfileSection leadId={lead.id} />
+
+          <div>
+            <div className="border-t pt-6 mb-4">
+              <h2 className="text-lg font-semibold">Client Profile</h2>
+              <p className="text-sm text-slate-500">Family members and documents for this client.</p>
+            </div>
+            <ClientProfileSection leadId={lead.id} />
+          </div>
         </div>
       )}
     </div>

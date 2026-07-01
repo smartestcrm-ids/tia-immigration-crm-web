@@ -102,4 +102,18 @@ export const api = {
   createChannelAccount: (data) => request('POST', '/api/channel-accounts', data),
   updateChannelAccount: (id, data) => request('PATCH', `/api/channel-accounts/${id}`, data),
   deleteChannelAccount: (id) => request('DELETE', `/api/channel-accounts/${id}`),
+
+  // Cases (post-contract workflow)
+  caseStages: () => request('GET', '/api/cases/stages'),
+  cases: () => request('GET', '/api/cases'),
+  caseForLead: (leadId) => request('GET', `/api/cases/lead/${leadId}`),
+  caseById: (id) => request('GET', `/api/cases/${id}`),
+  createCase: (leadId) => request('POST', '/api/cases', { leadId }),
+  updateCase: (id, data) => request('PATCH', `/api/cases/${id}`, data),
+  advanceCase: (id, data) => request('POST', `/api/cases/${id}/advance`, data || {}),
+  addRequirement: (caseId, data) => request('POST', `/api/cases/${caseId}/requirements`, data),
+  updateRequirement: (caseId, reqId, data) =>
+    request('PATCH', `/api/cases/${caseId}/requirements/${reqId}`, data),
+  deleteRequirement: (caseId, reqId) =>
+    request('DELETE', `/api/cases/${caseId}/requirements/${reqId}`),
 };
