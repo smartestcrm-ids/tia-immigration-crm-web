@@ -1,26 +1,31 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { api } from '../api.js';
+import { useAuth, hasRole } from '../auth.jsx';
+import NewClientModal from '../components/NewClientModal.jsx';
 
 export default function Clients() {
+  const { user } = useAuth();
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
   const [q, setQ] = useState('');
+  const [newOpen, setNewOpen] = useState(false);
 
-  useEffect(() => {
-    (async () => {
-      setLoading(true);
-      try {
-        // Fetch converted leads + their cases in parallel.
-        const [leads, cases] = await Promise.all([
-          api.leads({ status: 'CONVERTED' }),
-          api.cases(),
-        ]);
-        const caseByLeadId = Object.fromEntries((cases || []).map((c) => [c.lead.id, c]));
-        setRows(leads.map((lead) => ({ lead, case: caseByLeadId[lead.id] })));
-      } finally { setLoading(false); }
-    })();
-  }, []);
+  const canCreate = hasRole(user, 'ADMIN', 'MANAGER');
+
+  async function load() {
+    setLoading(true);
+    try {
+      const [leads, cases] = await Promise.all([
+        api.leads({ status: 'CONVERTED' }),
+        api.cases(),
+      ]);
+      const caseByLeadId = Object.fromEntries((cases || []).map((c) => [c.lead.id, c]));
+      setRows(leads.map((lead) => ({ lead, case: caseByLeadId[lead.id] })));
+    } finally { setLoading(false); }
+  }
+
+  useEffect(() => { load(); }, []);
 
   const filtered = rows.filter(({ lead }) =>
     !q.trim() ||
@@ -36,18 +41,35 @@ export default function Clients() {
   return (
     <div className="h-full flex flex-col">
       <header className="px-6 py-4 border-b bg-white">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-3">
           <div>
             <h1 className="text-xl font-semibold">Clients</h1>
             <p className="text-sm text-slate-500">Converted leads with active case files.</p>
           </div>
-          <input
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-            placeholder="Search name, email, phone…"
-            className="border rounded px-3 py-1.5 text-sm w-72"
-          />
+          <div className="flex items-center gap-2">
+            <input
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              placeholder="Search name, email, phone…"
+              className="border rounded px-3 py-1.5 text-sm w-72"
+            />
+            {canCreate && (
+              <button
+                onClick={() => setNewOpen(true)}
+                className="px-3 py-1.5 bg-brand-600 text-white text-sm rounded hover:bg-brand-700"
+              >
+                + New Client
+              </button>
+            )}
+          </div>
         </div>
+
+        {newOpen && (
+          <NewClientModal
+            onClose={() => setNewOpen(false)}
+            onCreated={() => { load(); }}
+          />
+        )}
         <div className="mt-3 grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
           <Kpi label="Total clients"     value={rows.length} />
           <Kpi label="Total agreement"   value={`$${totalAgreement.toLocaleString()}`} />
