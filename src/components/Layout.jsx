@@ -8,8 +8,12 @@ export default function Layout() {
   const navItems = [
     { to: '/inbox', label: 'Inbox', icon: '💬' },
     { to: '/leads', label: 'Leads', icon: '👤' },
+    { to: '/clients', label: 'Clients', icon: '⭐' },
     { to: '/reminders', label: 'Reminders', icon: '⏰' },
   ];
+  if (hasRole(user, 'ADMIN', 'MANAGER')) {
+    navItems.push({ to: '/reports', label: 'Reports', icon: '📊' });
+  }
   if (hasRole(user, 'ADMIN')) {
     navItems.push({ to: '/users',  label: 'Users',    icon: '🛡️' });
     navItems.push({ to: '/roles',  label: 'Roles',    icon: '🔑' });

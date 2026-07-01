@@ -5,6 +5,7 @@ import Badge from '../components/Badge.jsx';
 import ChannelIcon from '../components/ChannelIcon.jsx';
 import ClientProfileSection from '../components/ClientProfileSection.jsx';
 import CasePipeline from '../components/CasePipeline.jsx';
+import SendEmailModal from '../components/SendEmailModal.jsx';
 
 const STATUSES = ['NEW', 'CONTACTED', 'QUALIFIED', 'CONSULTATION', 'CONVERTED', 'CLOSED'];
 
@@ -16,6 +17,7 @@ export default function LeadDetail() {
   const [noteDraft, setNoteDraft] = useState('');
   const [reminderTitle, setReminderTitle] = useState('');
   const [reminderDate, setReminderDate] = useState('');
+  const [emailOpen, setEmailOpen] = useState(false);
 
   async function load() {
     const [l, ct, us] = await Promise.all([api.lead(id), api.caseTypes(), api.users()]);
@@ -62,7 +64,26 @@ export default function LeadDetail() {
         <h1 className="text-xl font-semibold">{lead.fullName}</h1>
         <ChannelIcon channel={lead.source} withLabel />
         <Badge status={lead.status}>{lead.status}</Badge>
+        <div className="ml-auto flex gap-2">
+          <button
+            onClick={() => setEmailOpen(true)}
+            disabled={!lead.email}
+            title={!lead.email ? 'No email on file' : 'Send an email to this lead'}
+            className="px-3 py-1.5 text-sm bg-brand-600 text-white rounded hover:bg-brand-700 disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            📧 Send email
+          </button>
+        </div>
       </header>
+
+      {emailOpen && (
+        <SendEmailModal
+          leadId={lead.id}
+          defaultTo={lead.email}
+          onClose={() => setEmailOpen(false)}
+          onSent={() => load()}
+        />
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 p-6">
         {/* Profile */}

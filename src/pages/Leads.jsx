@@ -4,7 +4,8 @@ import { api } from '../api.js';
 import Badge from '../components/Badge.jsx';
 import ChannelIcon from '../components/ChannelIcon.jsx';
 
-const STATUSES = ['', 'NEW', 'CONTACTED', 'QUALIFIED', 'CONSULTATION', 'CONVERTED', 'CLOSED'];
+// Leads page shows prospects only. CONVERTED clients live under /clients.
+const STATUSES = ['', 'NEW', 'CONTACTED', 'QUALIFIED', 'CONSULTATION', 'CLOSED'];
 
 export default function Leads() {
   const [leads, setLeads] = useState([]);
@@ -19,7 +20,8 @@ export default function Leads() {
       if (q) params.q = q;
       if (status) params.status = status;
       const data = await api.leads(params);
-      setLeads(data);
+      // Never show CONVERTED here — they live on the Clients page.
+      setLeads(data.filter((l) => l.status !== 'CONVERTED'));
     } finally { setLoading(false); }
   }
 

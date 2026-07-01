@@ -59,7 +59,9 @@ export const api = {
   markRead: (id) => request('POST', `/api/conversations/${id}/read`),
 
   leads: (params = {}) => {
-    const qs = new URLSearchParams(params).toString();
+    // Strip empty values so we don't send status= (which the backend would treat as filter).
+    const clean = Object.fromEntries(Object.entries(params).filter(([, v]) => v !== '' && v !== null && v !== undefined));
+    const qs = new URLSearchParams(clean).toString();
     return request('GET', `/api/leads${qs ? '?' + qs : ''}`);
   },
   lead: (id) => request('GET', `/api/leads/${id}`),
@@ -102,6 +104,13 @@ export const api = {
   createChannelAccount: (data) => request('POST', '/api/channel-accounts', data),
   updateChannelAccount: (id, data) => request('PATCH', `/api/channel-accounts/${id}`, data),
   deleteChannelAccount: (id) => request('DELETE', `/api/channel-accounts/${id}`),
+
+  // Reports
+  reportSummary: () => request('GET', '/api/reports/summary'),
+
+  // Messaging
+  messagingStatus: () => request('GET', '/api/messaging/status'),
+  sendEmail: (data) => request('POST', '/api/messaging/email', data),
 
   // Cases (post-contract workflow)
   caseStages: () => request('GET', '/api/cases/stages'),

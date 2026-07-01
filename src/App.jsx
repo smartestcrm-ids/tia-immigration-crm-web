@@ -11,6 +11,8 @@ import Users from './pages/Users.jsx';
 import Roles from './pages/Roles.jsx';
 import ChannelAccounts from './pages/ChannelAccounts.jsx';
 import Profile from './pages/Profile.jsx';
+import Clients from './pages/Clients.jsx';
+import Reports from './pages/Reports.jsx';
 
 export default function App() {
   return (
@@ -28,8 +30,17 @@ export default function App() {
         <Route path="/inbox/:id" element={<Conversation />} />
         <Route path="/leads" element={<Leads />} />
         <Route path="/leads/:id" element={<LeadDetail />} />
+        <Route path="/clients" element={<Clients />} />
         <Route path="/reminders" element={<Reminders />} />
         <Route path="/profile" element={<Profile />} />
+        <Route
+          path="/reports"
+          element={
+            <ProtectedRoute roles={['ADMIN', 'MANAGER']}>
+              <Reports />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/users"
           element={
